@@ -10,10 +10,11 @@ import {
   LogoHolder,
 } from "./MainMenu.style";
 import { useDispatch, useSelector } from "react-redux";
-// import { NavbarBrand } from "reactstrap";
+import { NavbarBrand } from "reactstrap";
 import { ThemeButton } from "../../Theme/ThemeButton.style";
 import { themeSwitched } from "../../../Redux/Slices/ThemeSlice";
 import { updatePageState } from "../../../Redux/Slices/pageStateSlice";
+import { AccountMenuOptions } from "../MenuOptions/MenuOptions";
 
 const MainMenu = ({ pageState: pageState }) => {
   const dispatch = useDispatch();
@@ -48,16 +49,12 @@ const MainMenu = ({ pageState: pageState }) => {
   };
   useEffect(() => {}, []);
 
-  return pageState.openPage ? (
+  return (
     <NavBar color={currentTheme}>
       <LogoHolder>
-        {/* <NavbarBrand href="/">
-          <img
-            src={logo}
-            alt="Logo"
-            style={{ width: "125px", height: "60px" }}
-          />
-        </NavbarBrand> */}
+        <NavbarBrand href="/">
+          <h3>ThAmCo</h3>
+        </NavbarBrand>
         <ThemeButton
           onClick={() => HandleDarkClick()}
           display={currentTheme.name === "light" ? "none" : "block"}
@@ -77,18 +74,32 @@ const MainMenu = ({ pageState: pageState }) => {
             Home
           </NavLink>
         </NavItem>
+        <NavItem selected={pageState.openPage === "products"}>
+          <NavLink
+            tag={Link}
+            to="/products"
+            onClick={() => handlePageUpdate("products")}
+          >
+            Products
+          </NavLink>
+        </NavItem>
         {!isAuthenticated && (
           <>
             <NavItem>
-              <NavButton
+              <NavLink
+                tag={Link}
+                to="/account"
                 onClick={() =>
-                  loginWithRedirect({
-                    authorizationParams: { screen_hint: "signup" },
-                  })
+                  dispatch(
+                    updatePageState({
+                      openPage: "account",
+                      options: AccountMenuOptions,
+                    })
+                  )
                 }
               >
-                Register
-              </NavButton>
+                Account
+              </NavLink>
             </NavItem>
             <NavItem>
               <NavButton onClick={() => HandleLogin()}>Login</NavButton>
@@ -104,8 +115,6 @@ const MainMenu = ({ pageState: pageState }) => {
         )}
       </NavMenu>
     </NavBar>
-  ) : (
-    <div>... loading</div>
   );
 };
 export default MainMenu;

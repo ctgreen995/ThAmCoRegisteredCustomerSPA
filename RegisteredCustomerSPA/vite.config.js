@@ -38,7 +38,7 @@ export default defineConfig({
   server: {
     proxy: {
       "^/weatherforecast": {
-        target: "https://localhost:5001/",
+        target: "https://localhost:7040/",
         secure: false,
       },
     },
@@ -48,4 +48,5 @@ export default defineConfig({
       cert: fs.readFileSync(certFilePath),
     },
   },
+  base: "./",
 });

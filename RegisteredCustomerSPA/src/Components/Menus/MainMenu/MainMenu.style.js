@@ -38,7 +38,7 @@ export const NavItem = styled(Menu.Item)`
 
   &:hover {
     color: ${(props) => props.theme.colors.text} !important;
-    border-bottom: 2px solid ${(props) => props.theme.colors.darkblue} !important;
+    border-bottom: 2px solid ${(props) => props.theme.colors.darkBlue} !important;
   }
   &.ant-menu-item-selected {
     border-bottom: ${(props) =>

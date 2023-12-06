@@ -3,13 +3,13 @@ import HomeScreen from "./HomeScreen";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const HomeScreenContainer = () => {
-  const [data, setData] = useState("THISSSSSSS");
+  const [data, setData] = useState([]);
   const { getAccessTokenSilently } = useAuth0();
 
   const fetchData = async () => {
     try {
       const response = await fetch(
-        `http://localhost:5082/weatherForecast/getWeatherForecast`
+        `weatherforecast/getWeatherForecast`
       );
 
       if (!response.ok) {
@@ -18,7 +18,7 @@ const HomeScreenContainer = () => {
 
       const responseData = await response.json();
       console.log(responseData);
-      setData(JSON.stringify(responseData));
+      setData(responseData)
     } catch (error) {
       console.log("Error fetching data:", error.message);
     }
