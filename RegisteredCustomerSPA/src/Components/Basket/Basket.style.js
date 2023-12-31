@@ -1,9 +1,10 @@
 import styled from "styled-components";
 
-export const CustomerOrdersWrapper = styled.div`
+export const Basket = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  width: 75%;
+  align-items: flex-end;
   justify-content: center;
-  margin: 20px 0;
+  gap: 20px;
 `;

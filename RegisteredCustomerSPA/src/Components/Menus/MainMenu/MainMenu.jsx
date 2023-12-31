@@ -13,12 +13,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { NavbarBrand } from "reactstrap";
 import { ThemeButton } from "../../Theme/ThemeButton.style";
 import { themeSwitched } from "../../../Redux/Slices/ThemeSlice";
-import { updatePageState } from "../../../Redux/Slices/pageStateSlice";
-import { AccountMenuOptions } from "../MenuOptions/MenuOptions";
+import { updatePageState } from "../../../Redux/Slices/PageStateSlice";
 
 const MainMenu = ({ pageState: pageState }) => {
   const dispatch = useDispatch();
-  const { user, isAuthenticated, loginWithPopup, loginWithRedirect, logout } =
+  const { isAuthenticated, loginWithPopup, logout, getAccessTokenSilently } =
     useAuth0();
 
   const currentTheme = useSelector((state) => state.themes);
@@ -44,10 +43,6 @@ const MainMenu = ({ pageState: pageState }) => {
     dispatch(themeSwitched("dark"));
     localStorage.setItem("theme", "dark");
   };
-  const handlePageUpdate = (page) => {
-    dispatch(updatePageState({ openPage: page }));
-  };
-  useEffect(() => {}, []);
 
   return (
     <NavBar color={currentTheme}>
@@ -70,44 +65,48 @@ const MainMenu = ({ pageState: pageState }) => {
       </LogoHolder>
       <NavMenu>
         <NavItem selected={pageState.openPage === "home"}>
-          <NavLink tag={Link} to="/" onClick={() => handlePageUpdate("home")}>
+          <NavLink
+            tag={Link}
+            to="/"
+            onClick={() => dispatch(updatePageState({ openPage: "home" }))}
+          >
             Home
           </NavLink>
         </NavItem>
-        <NavItem selected={pageState.openPage === "products"}>
-          <NavLink
-            tag={Link}
-            to="/products"
-            onClick={() => handlePageUpdate("products")}
-          >
-            Products
-          </NavLink>
-        </NavItem>
         {!isAuthenticated && (
+          <NavItem>
+            <NavButton onClick={() => HandleLogin()}>Login</NavButton>
+          </NavItem>
+        )}
+        {isAuthenticated && (
           <>
+            <NavItem selected={pageState.openPage === "viewProducts"}>
+              <NavLink
+                tag={Link}
+                to="/viewProducts"
+                onClick={() =>
+                  dispatch(updatePageState({ openPage: "viewProducts" }))
+                }
+              >
+                Products
+              </NavLink>
+            </NavItem>
             <NavItem>
               <NavLink
                 tag={Link}
-                to="/account"
+                to="/accountManagement"
+                selected={pageState.openPage === "accountManagement"}
                 onClick={() =>
                   dispatch(
                     updatePageState({
-                      openPage: "account",
-                      options: AccountMenuOptions,
+                      openPage: "accountManagement",
                     })
                   )
                 }
               >
-                Account
+                Account Management
               </NavLink>
             </NavItem>
-            <NavItem>
-              <NavButton onClick={() => HandleLogin()}>Login</NavButton>
-            </NavItem>
-          </>
-        )}
-        {isAuthenticated && (
-          <>
             <NavItem>
               <NavButton onClick={() => logoutWithRedirect()}>Logout</NavButton>
             </NavItem>

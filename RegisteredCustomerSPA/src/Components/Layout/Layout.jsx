@@ -6,10 +6,9 @@ import {
   Content,
 } from "./Layout.style";
 import MainMenu from "../Menus/MainMenu/MainMenu";
-import SubMenu from "../Menus/SubMenu/SubMenu";
 import { useSelector, useDispatch } from "react-redux";
 import { themeSwitched } from "../../Redux/Slices/ThemeSlice";
-import { updatePageState } from "../../Redux/Slices/pageStateSlice";
+import { updatePageState } from "../../Redux/Slices/PageStateSlice";
 import { GlobalStyles } from "../Theme/GlobalStyles";
 import { ThemeProvider } from "styled-components";
 import Loading from "../Loader/Loader";
@@ -30,9 +29,7 @@ const Layout = (props) => {
     }
   }, [dispatch]);
 
-  console.log(pageState);
-
-  return currentTheme && pageState ? (
+  return pageState ? (
     <LayoutContainer>
       <ThemeProvider theme={currentTheme}>
         <GlobalStyles />
@@ -40,7 +37,6 @@ const Layout = (props) => {
           <MainMenu pageState={pageState} />
         </TopRow>
         <MainContentWrapper>
-          {"options" in pageState && <SubMenu />}
           <Content>{props.children}</Content>
         </MainContentWrapper>
       </ThemeProvider>

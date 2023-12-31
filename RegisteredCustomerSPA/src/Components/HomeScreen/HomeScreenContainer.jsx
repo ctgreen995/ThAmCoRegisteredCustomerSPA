@@ -1,33 +1,16 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import HomeScreen from "./HomeScreen";
 import { useAuth0 } from "@auth0/auth0-react";
 
 const HomeScreenContainer = () => {
-  const [data, setData] = useState([]);
-  const { getAccessTokenSilently } = useAuth0();
-
-  const fetchData = async () => {
-    try {
-      const response = await fetch(
-        `weatherforecast/getWeatherForecast`
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-
-      const responseData = await response.json();
-      console.log(responseData);
-      setData(responseData)
-    } catch (error) {
-      console.log("Error fetching data:", error.message);
-    }
-  };
+  const { isauthenticated, isloading, getAccessTokenSilently } = useAuth0();
 
   useEffect(() => {
-    // fetchData();
-  }, []);
+    if (isauthenticated && !isloading) {
+      getAccessTokenSilently();
+    }
+  }, [getAccessTokenSilently, isauthenticated, isloading]);
 
-  return <HomeScreen data={data} fetch={fetchData} />;
+  return <HomeScreen />;
 };
 export default HomeScreenContainer;

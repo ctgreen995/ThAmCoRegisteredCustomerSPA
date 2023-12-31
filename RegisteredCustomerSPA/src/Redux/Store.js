@@ -1,15 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
 import themesReducer from "./Slices/ThemeSlice";
-import pageStateReducer from "./Slices/pageStateSlice";
+import pageStateReducer from "./Slices/PageStateSlice";
 import basketReducer from "./Slices/BasketSlice";
-import productsReducer from "./Slices/ProductsSlice";
+import customerReducer from "./Slices/CustomerSlice";
 
 const store = configureStore({
   reducer: {
     themes: themesReducer,
     pageState: pageStateReducer,
     basket: basketReducer,
-    products: productsReducer,
+    customer: customerReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

@@ -15,7 +15,7 @@ const certificateArg = process.argv
   .filter(Boolean)[0];
 const certificateName = certificateArg
   ? certificateArg.groups.value
-  : "reactapp";
+  : "RegisteredCustomerSpa";
 
 if (!certificateName) {
   console.error(
@@ -37,7 +37,15 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      "^/weatherforecast": {
+      "^/customerManagement": {
+        target: "https://localhost:7040/",
+        secure: false,
+      },
+      "^/products": {
+        target: "https://localhost:7040/",
+        secure: false,
+      },
+      "^/orders": {
         target: "https://localhost:7040/",
         secure: false,
       },

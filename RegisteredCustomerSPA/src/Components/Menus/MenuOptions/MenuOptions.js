@@ -1,18 +1,18 @@
 export const AccountMenuOptions = [
   {
+    name: "Account",
+    url: "customer/account",
+    label: "Account",
+  },
+  {
     name: "Profile",
-    url: "account/profile",
+    url: "customer/profile",
     label: "Profile",
   },
   {
     name: "Orders",
-    url: "account/orders",
+    url: "customer/orders",
     label: "Orders",
-  },
-  {
-    name: "Saved Basket",
-    link: "account/basket",
-    label: "Saved Basket",
   },
 ];
 

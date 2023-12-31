@@ -1,67 +1,67 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Products from "./Products";
-import { Navigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 import {
   addProduct,
   removeProduct,
   removeAllProducts,
 } from "../../Redux/Slices/BasketSlice";
-import { fetchProducts } from "../../Redux/Slices/ProductsSlice";
 
 const ProductsContainer = () => {
   const dispatch = useDispatch();
-  const basket = useSelector((state) => state.basket.basket);
-  const productError = useSelector((state) => state.products.error);
-  const products = useSelector((state) => state.products.products);
+  const navigate = useNavigate();
+  const [products, setProducts] = useState([]);
 
   const addToBasket = (product) => {
-    dispatch(addProduct(product));
+    dispatch(addProduct(...products, product));
   };
 
   const removeFromBasket = (product) => {
-    dispatch(removeProduct(product));
+    dispatch(
+      removeProduct(products.filter((item) => item.key !== product.key))
+    );
   };
 
   const emptyBasket = () => {
-    dispatch(removeAllProducts());
+    dispatch(removeAllProducts([]));
   };
 
   const order = () => {
-    Navigate("/ordering");
+    console.log("Order");
+    navigate("/newOrder");
   };
 
-  const groupedBasketItems = basket.reduce((acc, product) => {
-    const found = acc.find((item) => item.key === product.key);
-    if (found) {
-      found.quantity += 1;
-      found.totalPrice += product.price;
-    } else {
-      acc.push({ ...product, quantity: 1, totalPrice: product.price });
-    }
-    return acc;
-  }, []);
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch("products/getProducts", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-  const basketTotal = basket.reduce(
-    (total, product) => total + product.price,
-    0
-  );
+      if (!response.ok) {
+        throw new Error("Failed to fetch products", response.statusText);
+      }
+      const products = await response.json();
+      setProducts(products);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
-    dispatch(fetchProducts());
+    fetchProducts();
   }, [dispatch]);
 
   return (
     <Products
       products={products}
       addToBasket={addToBasket}
-      basket={basket}
       removeFromBasket={removeFromBasket}
-      basketTotal={basketTotal}
       emptyBasket={emptyBasket}
-      groupedBasketItems={groupedBasketItems}
       order={order}
-      productError={productError}
     />
   );
 };

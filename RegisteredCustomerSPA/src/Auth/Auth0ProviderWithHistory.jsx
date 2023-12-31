@@ -2,10 +2,10 @@ import React from "react";
 import { Auth0Provider } from "@auth0/auth0-react";
 import history from "../Utils/History";
 
-const Auth0ProviderWithHistory = ({ children}) => {
-  const domain = import.meta.env.REACT_APP_AUTH0_DOMAIN;
-  const clientId = import.meta.env.REACT_APP_AUTH0_CLIENT_ID;
-  const audience = import.meta.env.REACT_APP_API_IDENTIFIER;
+const Auth0ProviderWithHistory = ({ children }) => {
+  const domain = import.meta.env.VITE_AUTH0_DOMAIN;
+  const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
+  const audience = import.meta.env.VITE_API_IDENTIFIER;
   const onRedirectCallback = (appState) => {
     history.push(
       appState && appState.returnTo
