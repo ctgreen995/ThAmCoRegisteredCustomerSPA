@@ -1,6 +1,6 @@
 import { fileURLToPath, URL } from "node:url";
 
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import plugin from "@vitejs/plugin-react";
 import fs from "fs";
 import path from "path";
@@ -28,33 +28,42 @@ const certFilePath = path.join(baseFolder, `${certificateName}.pem`);
 const keyFilePath = path.join(baseFolder, `${certificateName}.key`);
 
 // https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [plugin()],
-  resolve: {
-    alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
-    },
-  },
-  server: {
-    proxy: {
-      "^/customerManagement": {
-        target: "https://localhost:7040/",
-        secure: false,
-      },
-      "^/products": {
-        target: "https://localhost:7040/",
-        secure: false,
-      },
-      "^/orders": {
-        target: "https://localhost:7040/",
-        secure: false,
+export default ({ mode }) => {
+  process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
+  const apiUrl = process.env.VITE_API_URL;
+  const isSecureProxy = process.env.VITE_SECURE_PROXY === "true";
+
+  return defineConfig({
+    plugins: [plugin()],
+    resolve: {
+      alias: {
+        "@": fileURLToPath(new URL("./src", import.meta.url)),
       },
     },
-    port: 5173,
-    https: {
-      key: fs.readFileSync(keyFilePath),
-      cert: fs.readFileSync(certFilePath),
+    server: {
+      proxy: {
+        "^/customerManagement": {
+          target: apiUrl,
+          secure: isSecureProxy,
+        },
+        "^/products": {
+          target: apiUrl,
+          secure: isSecureProxy,
+        },
+        "^/orders": {
+          target: apiUrl,
+          secure: isSecureProxy,
+        },
+      },
+      port: 5173,
+      https:
+        process.env.NODE_ENV === "development"
+          ? {
+              key: fs.readFileSync(keyFilePath),
+              cert: fs.readFileSync(certFilePath),
+            }
+          : undefined,
     },
-  },
-  base: "./",
-});
+    base: "./",
+  });
+};
