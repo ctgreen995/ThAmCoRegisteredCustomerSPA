@@ -10,14 +10,14 @@ import {
   LogoHolder,
 } from "./MainMenu.style";
 import { useDispatch, useSelector } from "react-redux";
-// import { NavbarBrand } from "reactstrap";
+import { NavbarBrand } from "reactstrap";
 import { ThemeButton } from "../../Theme/ThemeButton.style";
 import { themeSwitched } from "../../../Redux/Slices/ThemeSlice";
-import { updatePageState } from "../../../Redux/Slices/pageStateSlice";
+import { updatePageState } from "../../../Redux/Slices/PageStateSlice";
 
 const MainMenu = ({ pageState: pageState }) => {
   const dispatch = useDispatch();
-  const { user, isAuthenticated, loginWithPopup, loginWithRedirect, logout } =
+  const { isAuthenticated, loginWithPopup, logout, getAccessTokenSilently } =
     useAuth0();
 
   const currentTheme = useSelector((state) => state.themes);
@@ -43,21 +43,13 @@ const MainMenu = ({ pageState: pageState }) => {
     dispatch(themeSwitched("dark"));
     localStorage.setItem("theme", "dark");
   };
-  const handlePageUpdate = (page) => {
-    dispatch(updatePageState({ openPage: page }));
-  };
-  useEffect(() => {}, []);
 
-  return pageState.openPage ? (
+  return (
     <NavBar color={currentTheme}>
       <LogoHolder>
-        {/* <NavbarBrand href="/">
-          <img
-            src={logo}
-            alt="Logo"
-            style={{ width: "125px", height: "60px" }}
-          />
-        </NavbarBrand> */}
+        <NavbarBrand href="/">
+          <h3>ThAmCo</h3>
+        </NavbarBrand>
         <ThemeButton
           onClick={() => HandleDarkClick()}
           display={currentTheme.name === "light" ? "none" : "block"}
@@ -73,30 +65,48 @@ const MainMenu = ({ pageState: pageState }) => {
       </LogoHolder>
       <NavMenu>
         <NavItem selected={pageState.openPage === "home"}>
-          <NavLink tag={Link} to="/" onClick={() => handlePageUpdate("home")}>
+          <NavLink
+            tag={Link}
+            to="/"
+            onClick={() => dispatch(updatePageState({ openPage: "home" }))}
+          >
             Home
           </NavLink>
         </NavItem>
         {!isAuthenticated && (
-          <>
-            <NavItem>
-              <NavButton
-                onClick={() =>
-                  loginWithRedirect({
-                    authorizationParams: { screen_hint: "signup" },
-                  })
-                }
-              >
-                Register
-              </NavButton>
-            </NavItem>
-            <NavItem>
-              <NavButton onClick={() => HandleLogin()}>Login</NavButton>
-            </NavItem>
-          </>
+          <NavItem>
+            <NavButton onClick={() => HandleLogin()}>Login</NavButton>
+          </NavItem>
         )}
         {isAuthenticated && (
           <>
+            <NavItem selected={pageState.openPage === "viewProducts"}>
+              <NavLink
+                tag={Link}
+                to="/viewProducts"
+                onClick={() =>
+                  dispatch(updatePageState({ openPage: "viewProducts" }))
+                }
+              >
+                Products
+              </NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink
+                tag={Link}
+                to="/accountManagement"
+                selected={pageState.openPage === "accountManagement"}
+                onClick={() =>
+                  dispatch(
+                    updatePageState({
+                      openPage: "accountManagement",
+                    })
+                  )
+                }
+              >
+                Account Management
+              </NavLink>
+            </NavItem>
             <NavItem>
               <NavButton onClick={() => logoutWithRedirect()}>Logout</NavButton>
             </NavItem>
@@ -104,8 +114,6 @@ const MainMenu = ({ pageState: pageState }) => {
         )}
       </NavMenu>
     </NavBar>
-  ) : (
-    <div>... loading</div>
   );
 };
 export default MainMenu;
