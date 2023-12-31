@@ -13,6 +13,8 @@ const Auth0ProviderWithHistory = ({ children }) => {
         : window.location.pathname
     );
   };
+
+  console.log(onRedirectCallback());
   return (
     <Auth0Provider
       domain={domain}
