@@ -3,12 +3,13 @@ import CreateOrder from "./CreateOrder";
 import { useSelector } from "react-redux";
 
 const CreateOrderContainer = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const customer = useSelector((state) => state.customer.customer);
   const basket = useSelector((state) => state.basket.basket);
 
   const createNewOrder = async (order) => {
     try {
-      const response = await fetch("orders/createOrder", {
+      const response = await fetch(`${apiUrl}/orders/createOrder`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

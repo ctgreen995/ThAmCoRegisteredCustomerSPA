@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { setCustomer } from "../../Redux/Slices/CustomerSlice";
 
 const CustomerManagementContainer = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const { user, getAccessTokenSilently } = useAuth0();
   const customer = useSelector((state) => state.customer.customer);
   const [orders, setOrders] = useState([]);
@@ -15,7 +16,7 @@ const CustomerManagementContainer = () => {
     const token = await getAccessTokenSilently();
     try {
       const response = await fetch(
-        `customerManagement/getCustomerDetailsById/${id}`,
+        `${apiUrl}/customerManagement/getCustomerDetailsById/${id}`,
         {
           method: "GET",
           headers: {
@@ -42,7 +43,7 @@ const CustomerManagementContainer = () => {
       const token = await getAccessTokenSilently();
 
       const response = await fetch(
-        `customerManagement/updateCustomerById/${id}`,
+        `${apiUrl}/customerManagement/updateCustomerById/${id}`,
         {
           method: "PUT",
           headers: {
@@ -69,7 +70,7 @@ const CustomerManagementContainer = () => {
   async function deleteCustomer(customer) {
     try {
       const response = await fetch(
-        `customerManagement/requestDeleteCustomerById/${id}`,
+        `${apiUrl}/customerManagement/requestDeleteCustomerById/${id}`,
         {
           method: "DELETE",
           headers: {
@@ -91,9 +92,12 @@ const CustomerManagementContainer = () => {
   async function getOrders() {
     try {
       const id = user.sub;
-      const response = await fetch(`orders/getOrdersByCustomerId/${id}`, {
-        method: "GET",
-      });
+      const response = await fetch(
+        `${apiUrl}/orders/getOrdersByCustomerId/${id}`,
+        {
+          method: "GET",
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to get orders", response.statusText);

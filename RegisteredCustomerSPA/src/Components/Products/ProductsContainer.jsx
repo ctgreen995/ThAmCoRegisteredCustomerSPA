@@ -9,6 +9,7 @@ import {
 } from "../../Redux/Slices/BasketSlice";
 
 const ProductsContainer = () => {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
@@ -34,7 +35,7 @@ const ProductsContainer = () => {
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch("products/getProducts", {
+      const response = await fetch(`${apiUrl}/products/getProducts`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
