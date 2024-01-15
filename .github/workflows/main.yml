@@ -20,7 +20,7 @@ jobs:
           submodules: true
           lfs: false
       - name: Use .env File
-        run: cp .env .env.production
+        run: cp /RegisteredCustomerSPA/.env /RegisteredCustomerSPA/.env.production
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
