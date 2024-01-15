@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Form, Input, Row, Col, Typography, Button } from "antd";
+import { Form, Input, Row, Col, Typography, Button, Modal } from "antd";
+import { useNavigate } from "react-router-dom";
 
 const { Title } = Typography;
 
@@ -8,6 +9,7 @@ const CustomerManagement = ({
   saveDetails,
   deleteCustomer,
   orders,
+  logout,
 }) => {
   if (!customer) {
     return <p>No Customer Details available.</p>;
@@ -18,6 +20,23 @@ const CustomerManagement = ({
   const [editableAccount, setEditableAccount] = useState(
     customer.customerAccountDto
   );
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const navigate = useNavigate();
+
+  const handleDelete = async () => {
+    try {
+      await deleteCustomer();
+      setIsDeleteModalVisible(true);
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+  const handleOk = () => {
+    setIsDeleteModalVisible(false);
+    logout();
+    navigate("/");
+  };
 
   useEffect(() => {
     setEditableProfile(customer.customerProfileDto);
@@ -132,21 +151,31 @@ const CustomerManagement = ({
           )}
         </Col>
       </Row>
-      <Button
-        id="saveChanges"
-        type="primary"
-        onClick={() => saveDetails(editableAccount, editableProfile)}
-      >
-        Save Changes
-      </Button>
-      <Button
-        id="deleteAccount"
-        type="primary"
-        onClick={() => deleteCustomer()}
-        style={{ marginLeft: "50px" }}
-      >
-        Delete Account
-      </Button>
+      <Row gutter={[16, 16]}>
+        <Button
+          id="saveChanges"
+          type="primary"
+          onClick={() => saveDetails(editableAccount, editableProfile)}
+        >
+          Save Changes
+        </Button>
+        <Button
+          id="deleteAccount"
+          type="primary"
+          onClick={() => handleDelete()}
+          style={{ marginLeft: "50px" }}
+        >
+          Delete Account
+        </Button>
+        <Modal
+          title="Account Deletion"
+          visible={isDeleteModalVisible}
+          onOk={handleOk}
+          cancelButtonProps={{ style: { display: "none" } }}
+        >
+          <p>Account Deleted</p>
+        </Modal>
+      </Row>
     </div>
   );
 };

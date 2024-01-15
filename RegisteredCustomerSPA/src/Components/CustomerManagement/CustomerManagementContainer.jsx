@@ -6,7 +6,7 @@ import { setCustomer } from "../../Redux/Slices/CustomerSlice";
 
 const CustomerManagementContainer = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
-  const { user, getAccessTokenSilently } = useAuth0();
+  const { user, getAccessTokenSilently, logout } = useAuth0();
   const customer = useSelector((state) => state.customer.customer);
   const [orders, setOrders] = useState([]);
   const dispatch = useDispatch();
@@ -37,15 +37,13 @@ const CustomerManagementContainer = () => {
   }
 
   async function updateCustomer(customer) {
+    const id = user.sub;
+    const token = await getAccessTokenSilently();
     try {
-      dispatch(setCustomer(customer));
-      const id = user.sub;
-      const token = await getAccessTokenSilently();
-
       const response = await fetch(
         `${apiUrl}/customerManagement/updateCustomerById/${id}`,
         {
-          method: "PUT",
+          method: "PATCH",
           headers: {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
@@ -60,6 +58,7 @@ const CustomerManagementContainer = () => {
           response.statusText
         );
       }
+      dispatch(setCustomer(customer));
       return await response.json();
     } catch (error) {
       console.error(error);
@@ -67,7 +66,9 @@ const CustomerManagementContainer = () => {
     }
   }
 
-  async function deleteCustomer(customer) {
+  async function deleteCustomer() {
+    const id = user.sub;
+    const token = await getAccessTokenSilently();
     try {
       const response = await fetch(
         `${apiUrl}/customerManagement/requestDeleteCustomerById/${id}`,
@@ -82,10 +83,14 @@ const CustomerManagementContainer = () => {
       if (!response.ok) {
         throw new Error("Failed to delete customer", response.statusText);
       }
-      return await response.json();
+
+      return;
     } catch (error) {
       console.error(error);
-      throw new Error("Unable to get customer from the server", error.message);
+      throw new Error(
+        "Unable to delete the account from the server",
+        error.message
+      );
     }
   }
 
@@ -119,12 +124,12 @@ const CustomerManagementContainer = () => {
   }, []);
 
   const saveDetails = (customerAccountDto, customerProfileDto) => {
-    updatedCustomerData = {
+    let updatedCustomerData = {
       ...customer,
       customerAccountDto,
       customerProfileDto,
     };
-    updateCustomer(updateCustomerData);
+    updateCustomer(updatedCustomerData);
   };
   return (
     <CustomerManagement
@@ -132,6 +137,7 @@ const CustomerManagementContainer = () => {
       saveDetails={saveDetails}
       deleteCustomer={deleteCustomer}
       orders={orders}
+      logout={logout}
     />
   );
 };
