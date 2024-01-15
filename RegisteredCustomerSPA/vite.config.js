@@ -61,11 +61,13 @@ export default ({ mode }) => {
           logLevel: "debug",
         },
       },
-      port: 5173,
-      https: {
-        key: fs.readFileSync(keyFilePath),
-        cert: fs.readFileSync(certFilePath),
-      },
+      https:
+        process.env.NODE_ENV === "development"
+          ? {
+              key: fs.readFileSync(keyFilePath),
+              cert: fs.readFileSync(certFilePath),
+            }
+          : undefined,
     },
     base: "./",
   });
